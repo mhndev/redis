@@ -1,5 +1,5 @@
 <?php
-namespace poirot\redis;
+
 
 class redisDb
 {
@@ -11,19 +11,23 @@ class redisDb
 
     /**
      * @param null $driver
+     * @param array $options
      * @throws Exception
      */
-    private function __construct($driver = null)
+    private function __construct($driver = null , $options = [])
     {
         if($driver)
             if($driver == 'phpModule' && !extension_loaded('redis'))
                 throw new Exception("php redis module has'nt been loaded maybe it's not installed");
         self::$_driverName = $driver;
 
-        if($driver == 'phpModule')
-            self::$_driver = new PhpModuleRedis();
+        if($driver == 'phpModule') {
+            self::$_driver = new PhpModuleRedis($options);
+
+        }
         else
-            self::$_driver = new PhpLibRedis();
+            self::$_driver = new PhpLibRedis($options);
+
     }
 
 
@@ -34,22 +38,13 @@ class redisDb
      */
     public static function getInstance ($driver = null , array $options = [])
     {
-        if (self::$_instance === null) {
-            self::$_instance = new self($driver);
-            self::buildDriver($options);
+        if (!self::$_instance) {
+            self::$_instance = new self($driver , $options);
+            self::$_driver->setupFromArray($options);
         }
 
         return self::$_instance;
     }
-
-    /**
-     * @param $options
-     */
-    public static function buildDriver($options)
-    {
-        self::$_driver->setupFromArray($options);
-    }
-
 
     /**
      * @param $driver

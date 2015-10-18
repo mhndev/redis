@@ -1,5 +1,5 @@
 {
-  "name": "poirot/redis",
+  "name": "mhndev/redis",
   "description": "Redis Storage",
   "type":"library",
   "license": "MIT",

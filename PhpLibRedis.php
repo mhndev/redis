@@ -1,5 +1,4 @@
 <?php
-namespace poirot\redis;
 
 class PhpLibRedis extends AbstractRedis
 {

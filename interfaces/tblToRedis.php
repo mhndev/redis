@@ -1,6 +1,5 @@
 <?php
 
-namespace poirot\redis\interfaces;
 
 interface tblToRedis
 {

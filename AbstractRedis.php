@@ -1,6 +1,6 @@
 <?php
 
-namespace poirot\redis;
+
 
 /**
  * Class AbstractRedis
@@ -37,6 +37,25 @@ abstract class AbstractRedis implements tblToRedis
      */
      protected $redisHandler;
 
+
+    /**
+     * @var
+     */
+    protected $recordsIn;
+
+
+    /**
+     * @var
+     */
+    protected $namespace;
+
+    /**
+     * @return mixed
+     */
+    public function getRecordsIn()
+    {
+        return $this->recordsIn;
+    }
     /**
      * @return mixed
      */
@@ -69,10 +88,11 @@ abstract class AbstractRedis implements tblToRedis
 
     function __construct(array $options)
     {
-        $this->setHost($options['host']);
-        $this->setPort($options['port']);
-        $this->setRecordNum($options['recordNum']);
-        $this->setTable($options['table']);
+//        $this->setHost($options['host']);
+//        $this->setPort($options['port']);
+//        $this->setRecordNum($options['recordNum']);
+//        $this->setTable($options['table']);
+//        $this->setNamespace($options['namespace']);
     }
 
     /**
@@ -148,9 +168,6 @@ abstract class AbstractRedis implements tblToRedis
      */
     protected function getColumns()
     {
-        if(empty($this->columns))
-            $this->columns = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'my_database' AND TABLE_NAME = 'my_table';";
-
         return $this->columns;
     }
 
@@ -159,7 +176,20 @@ abstract class AbstractRedis implements tblToRedis
      */
     function setupFromArray(array $array)
     {
+        foreach($array as $key => $val){
+            $this->{'set'.$key}($val);
+        }
+    }
 
+
+    function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+    }
+
+    function getNamespace()
+    {
+        return $this->namespace;
     }
 
     abstract function  persist(array $data);

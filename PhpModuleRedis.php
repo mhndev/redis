@@ -1,5 +1,4 @@
 <?php
-namespace poirot\redis;
 
 class PhpModuleRedis extends AbstractRedis
 {
@@ -7,20 +6,20 @@ class PhpModuleRedis extends AbstractRedis
     /**
      * @param null $params
      */
-    function __construct($params = null)
+    function __construct(array $params = [])
     {
         if($params)
             parent::__construct($params);
 
-        parent::__construct(['host'=>'127.0.0.1' , 'port'=>6379 , 'recordNum'=>200 , 'table'=>'tbl1']);
+        parent::__construct($params);
 
         $redisClient = new Redis();
-        $redisClient->connect($this->host , $this->port);
+        $redisClient->connect('127.0.0.1' , 6379);
 
         $this->redisHandler = $redisClient;
 
         if($params)
-            $this->setFromArray($params);
+            $this->setupFromArray($params);
 
         return $this;
     }
@@ -34,7 +33,7 @@ class PhpModuleRedis extends AbstractRedis
     {
         if($this->redisHandler) {
 
-            $this->redisHandler->setOption(Redis::OPT_PREFIX, $this->table.':');
+            $this->redisHandler->setOption(Redis::OPT_PREFIX, $this->namespace.':');
 
             for ($i = 0; $i < $this->recordNum; $i++) {
                 foreach ($data as $key => $value) {
@@ -44,6 +43,18 @@ class PhpModuleRedis extends AbstractRedis
         }
 
         return $this;
+    }
+
+
+    function fetchFromNamespace($namespace , $args = null)
+    {
+        if(empty($this->getRecordsIn))
+            $this->recordsIn = $this->redisHandler->keys($namespace.':*');
+
+        if(!$args)
+            return $this->recordsIn;
+        else
+            return count($this->recordsIn) < $args['count']? $this->recordsIn : array_slice($this->recordsIn, 0, $args['count']);
     }
 
 
@@ -58,7 +69,7 @@ class PhpModuleRedis extends AbstractRedis
 
         if($this->redisHandler) {
 
-            $this->redisHandler->_prefix($this->table);
+            $this->redisHandler->_prefix($this->namespace);
 
             for ($i = 0; $i < $this->recordNum; $i++) {
                 $record = [];
