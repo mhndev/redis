@@ -1,0 +1,29 @@
+{
+  "name": "poirot/redis",
+  "description": "Redis Storage",
+  "type":"library",
+  "license": "MIT",
+  "keywords": ["poirot" , "redis"],
+  "authors": [
+    {
+      "name": "Majid Abdolhosseini",
+      "email": "majid8911303@gmail.com"
+    }
+  ],
+  "require":  {
+    "poirot/core": "dev-master"
+    ,"predis/predis": "1.1.*@dev"
+  },
+
+  "require-dev": {
+    "phpunit/phpunit": "4.0.*"
+  },
+
+  "target-dir": "Poirot/Redis",
+
+  "autoload": {
+    "psr-0": {
+      "poirot\\redis": "."
+    }
+  }
+}
