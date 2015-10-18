@@ -39,30 +39,22 @@ class PhpLibRedis extends AbstractRedis
 
     /**
      * @param array $data
-     * @return bool|void
      */
     function persistPipe(array $data)
     {
-
-        $result = false;
-
         if($this->redisHandler) {
 
             $this->redisHandler->_prefix($this->table);
 
             for ($i = 0; $i < $this->recordNum; $i++) {
-                // $record = fetch from db
-                $record = [];
-                $this->redisHandler->multi();
-                foreach ($this->columns as $column) {
-                    $this->redisHandler->set($column, $record[$column]);
+                $pipe = $this->redisHandler->multi();
+                foreach ($data as $key => $value) {
+                    $pipe->set($key, $value);
                 }
 
-                $result = $this->redisHandler->exec();
+                $pipe->exec();
             }
 
         }
-
-        return $result;
     }
 }

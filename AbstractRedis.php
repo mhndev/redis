@@ -88,11 +88,7 @@ abstract class AbstractRedis implements tblToRedis
 
     function __construct(array $options)
     {
-//        $this->setHost($options['host']);
-//        $this->setPort($options['port']);
-//        $this->setRecordNum($options['recordNum']);
-//        $this->setTable($options['table']);
-//        $this->setNamespace($options['namespace']);
+
     }
 
     /**

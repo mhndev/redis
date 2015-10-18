@@ -24,6 +24,22 @@ class PhpModuleRedis extends AbstractRedis
         return $this;
     }
 
+    /**
+     * @param $namespace
+     * @param null $args
+     * @return array
+     */
+    function fetchFromNamespace($namespace , $args = null)
+    {
+        if(empty($this->getRecordsIn))
+            $this->recordsIn = $this->redisHandler->keys($namespace.':*');
+
+        if(!$args)
+            return $this->recordsIn;
+        else
+            return count($this->recordsIn) < $args['count']? $this->recordsIn : array_slice($this->recordsIn, 0, $args['count']);
+    }
+
 
     /**
      * @param array $data
@@ -46,44 +62,28 @@ class PhpModuleRedis extends AbstractRedis
     }
 
 
-    function fetchFromNamespace($namespace , $args = null)
-    {
-        if(empty($this->getRecordsIn))
-            $this->recordsIn = $this->redisHandler->keys($namespace.':*');
-
-        if(!$args)
-            return $this->recordsIn;
-        else
-            return count($this->recordsIn) < $args['count']? $this->recordsIn : array_slice($this->recordsIn, 0, $args['count']);
-    }
-
-
     /**
      * @param array $data
      * @return bool
      */
     function persistPipe(array $data)
     {
-
-        $result = false;
-
         if($this->redisHandler) {
-
             $this->redisHandler->_prefix($this->namespace);
 
-            for ($i = 0; $i < $this->recordNum; $i++) {
-                $record = [];
-                $this->redisHandler->multi();
-                foreach ($this->columns as $column) {
-                    $this->redisHandler->set($column, $record[$column]);
-                }
 
-                $result = $this->redisHandler->exec();
+            var_dump($data);
+            die();
+            $pipe = $this->redisHandler->multi();
+
+            for ($i = 0; $i < $this->recordNum; $i++) {
+                foreach($data as $key => $value)
+                    $pipe->set($key , $value);
             }
 
-        }
+            $this->redisHandler->exec();
 
-        return $result;
+        }
     }
 
 
